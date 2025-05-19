@@ -1,0 +1,1 @@
+# SQLAlchemy-модели для Character и связанных таблиц

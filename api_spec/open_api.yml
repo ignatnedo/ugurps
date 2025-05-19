@@ -1,0 +1,156 @@
+openapi: 3.0.0
+info:
+  title: GURPS Character API
+  version: 1.0.0
+  description: API для управления персонажами GURPS
+
+servers:
+  - url: http://localhost:8000
+    description: Локальный сервер разработки
+
+paths:
+  /characters/:
+    get:
+      summary: Получить список всех персонажей
+      responses:
+        '200':
+          description: Успешный ответ
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Character'
+
+    post:
+      summary: Создать нового персонажа
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CharacterCreate'
+      responses:
+        '201':
+          description: Персонаж создан
+
+  /characters/{id}:
+    get:
+      summary: Получить персонажа по ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Успешный ответ
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Character'
+        '404':
+          description: Персонаж не найден
+
+    put:
+      summary: Обновить данные персонажа
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CharacterUpdate'
+      responses:
+        '200':
+          description: Персонаж обновлён
+
+    delete:
+      summary: Удалить персонажа
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '204':
+          description: Персонаж удалён
+
+components:
+  schemas:
+    Character:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        age:
+          type: integer
+        attributes:
+          type: object
+          properties:
+            strength:
+              type: integer
+            dexterity:
+              type: integer
+            intelligence:
+              type: integer
+            health:
+              type: integer
+        skills:
+          type: array
+          items:
+            $ref: '#/components/schemas/Skill'
+        traits:
+          type: array
+          items:
+            $ref: '#/components/schemas/Trait'
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/Item'
+
+    CharacterCreate:
+      allOf:
+        - $ref: '#/components/schemas/Character'
+      required:
+        - name
+        - age
+
+    CharacterUpdate:
+      allOf:
+        - $ref: '#/components/schemas/Character'
+
+    Skill:
+      type: object
+      properties:
+        name:
+          type: string
+        level:
+          type: integer
+
+    Trait:
+      type: object
+      properties:
+        name:
+          type: string
+        description:
+          type: string
+
+    Item:
+      type: object
+      properties:
+        name:
+          type: string
+        weight:
+          type: number
+        description:
+          type: string
